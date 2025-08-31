@@ -40,7 +40,7 @@ export function parseWhatsAppExport(txt: string): WhatsAppMessage[] {
       }
 
       const { dateStr, timeStr, ampm, rest, style } = meta;
-      const { user, text } = parseUserAndText(rest, style);
+      const { user, text } = parseUserAndText(rest);
       pending = {
         dateStr,
         timeStr,
@@ -188,7 +188,7 @@ function detectMessageStart(line: string): DetectedStart {
   return null;
 }
 
-function parseUserAndText(rest: string, _style: "bracket" | "dash"): { user: string; text: string } {
+function parseUserAndText(rest: string): { user: string; text: string } {
   // In both styles, after header we often have "Name: message".
   // Some system messages have no colon/user.
   const colonIdx = rest.indexOf(": ");

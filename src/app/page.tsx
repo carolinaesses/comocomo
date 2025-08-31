@@ -2,9 +2,13 @@
 
 import { useState } from "react";
 
+type ApiResponse =
+  | { processed: number; appended: number; records: { inputText: string; record: any }[] }
+  | { error: string };
+
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
-  const [result, setResult] = useState<unknown>(null);
+  const [result, setResult] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -46,7 +50,7 @@ export default function Home() {
         </button>
       </form>
       {error && <p className="text-red-600 mt-4">{error}</p>}
-      {result && (
+      {result && "processed" in result && (
         <pre className="mt-4 p-3 bg-gray-100 text-sm overflow-auto">{JSON.stringify(result, null, 2)}</pre>
       )}
     </main>
