@@ -2,8 +2,22 @@
 
 import { useState } from "react";
 
+type GeminiMealRecord = {
+  userId: string;
+  date: string;
+  meals: {
+    time: string;
+    type: string;
+    items: string[];
+    has_carb: boolean;
+    has_protein: boolean;
+    has_veggies: boolean;
+    notes: string;
+  }[];
+};
+
 type ApiResponse =
-  | { processed: number; appended: number; records: { inputText: string; record: any }[] }
+  | { processed: number; appended: number; records: { inputText: string; record: GeminiMealRecord }[] }
   | { error: string };
 
 export default function Home() {

@@ -39,7 +39,7 @@ export function parseWhatsAppExport(txt: string): WhatsAppMessage[] {
         });
       }
 
-      const { dateStr, timeStr, ampm, rest, style } = meta;
+      const { dateStr, timeStr, ampm, rest } = meta;
       const { user, text } = parseUserAndText(rest);
       pending = {
         dateStr,
