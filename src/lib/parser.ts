@@ -188,7 +188,7 @@ function detectMessageStart(line: string): DetectedStart {
   return null;
 }
 
-function parseUserAndText(rest: string, style: "bracket" | "dash"): { user: string; text: string } {
+function parseUserAndText(rest: string, _style: "bracket" | "dash"): { user: string; text: string } {
   // In both styles, after header we often have "Name: message".
   // Some system messages have no colon/user.
   const colonIdx = rest.indexOf(": ");
@@ -206,8 +206,8 @@ function normalizeDateTime(dateStr: string, timeStr: string, ampm?: string): { d
   const sep = dateStr.includes("/") ? "/" : "-";
   const [p1, p2, p3] = dateStr.split(sep).map((p) => p.trim());
 
-  let day = parseInt(p1, 10);
-  let month = parseInt(p2, 10);
+  const day = parseInt(p1, 10);
+  const month = parseInt(p2, 10);
   let year = parseInt(p3, 10);
 
   // Heuristic: if first part <= 12 and second part > 12, still dd/mm works; if both <=12, assume dd/mm (common in ES exports)
@@ -217,7 +217,7 @@ function normalizeDateTime(dateStr: string, timeStr: string, ampm?: string): { d
   const date = `${pad2(year)}-${pad2(month)}-${pad2(day)}`;
 
   // Time: HH:MM with optional AM/PM
-  let [hStr, mStr] = timeStr.split(":");
+  const [hStr, mStr] = timeStr.split(":");
   let hour = parseInt(hStr, 10);
   const minute = parseInt(mStr, 10);
   if (ampm) {

@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ processed: 0, appended: 0, records: [] });
     }
 
-    const records = [] as { inputText: string; record: any }[];
+    const records: { inputText: string; record: { userId: string; date: string; meals: { time: string; type: string; items: string[]; has_carb: boolean; has_protein: boolean; has_veggies: boolean; notes: string }[] } }[] = [];
     for (const msg of foodMessages) {
       const record = await analyzeFoodMessageWithGemini({ userId: msg.user, date: msg.date, message: msg.text });
       records.push({ inputText: msg.text, record });

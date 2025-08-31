@@ -1,5 +1,18 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+### Environment Variables
+
+Create `.env.local` with:
+
+```
+GEMINI_API_KEY=
+GOOGLE_CLIENT_EMAIL=
+GOOGLE_PRIVATE_KEY=-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n
+SHEET_ID=
+```
+
+In Vercel, paste `GOOGLE_PRIVATE_KEY` with literal `\n` line breaks.
+
 ## Getting Started
 
 First, run the development server:
@@ -31,6 +44,7 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Push the repo to GitHub (already done).
+2. Import the project in Vercel.
+3. Set env vars (`GEMINI_API_KEY`, `GOOGLE_CLIENT_EMAIL`, `GOOGLE_PRIVATE_KEY`, `SHEET_ID`).
+4. Deploy.

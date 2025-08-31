@@ -82,7 +82,7 @@ Rules:
     throw new Error(`Gemini API error: ${res.status} ${errText}`);
   }
 
-  const data = (await res.json()) as any;
+  const data: unknown = await res.json();
   const textOut = extractTextFromGeminiResponse(data);
 
   let parsed: unknown;
@@ -96,12 +96,21 @@ Rules:
   return validated;
 }
 
-function extractTextFromGeminiResponse(data: any): string {
-  const partText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+type GeminiPart = { text?: string };
+type GeminiContent = { parts?: GeminiPart[] };
+type GeminiCandidate = { content?: GeminiContent };
+type GeminiResponse = { candidates?: GeminiCandidate[] };
+
+function extractTextFromGeminiResponse(data: unknown): string {
+  if (!data || typeof data !== "object") {
+    throw new Error("Invalid Gemini response");
+  }
+  const candidates = (data as GeminiResponse).candidates;
+  const partText = candidates?.[0]?.content?.parts?.[0]?.text;
   if (typeof partText === "string" && partText.trim()) return partText.trim();
-  const parts = data?.candidates?.[0]?.content?.parts;
+  const parts = candidates?.[0]?.content?.parts;
   if (Array.isArray(parts)) {
-    const joined = parts.map((p: any) => (typeof p?.text === "string" ? p.text : "")).join("");
+    const joined = parts.map((p: GeminiPart) => (typeof p?.text === "string" ? p.text : "")).join("");
     if (joined.trim()) return joined.trim();
   }
   throw new Error("Gemini response missing text");
