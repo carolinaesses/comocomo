@@ -1,3 +1,5 @@
+import { analyzeFoodMessageWithGemini, GeminiMealRecord } from "./gemini";
+
 export interface WhatsAppMessage {
   date: string; // YYYY-MM-DD
   time: string; // HH:MM
@@ -6,240 +8,339 @@ export interface WhatsAppMessage {
   raw: string;
 }
 
+// FUNCIONES DE PARSER ANTIGUAS ELIMINADAS
+// La IA ahora hace TODO el trabajo de parsing
+
+// FUNCIONES AUXILIARES ELIMINADAS
+// La IA maneja toda la lógica de identificación de comidas
+
+// TODAS LAS FUNCIONES AUXILIARES ELIMINADAS
+// La IA maneja completamente el parsing, extracción y análisis
+
 /**
- * Parse a WhatsApp exported .txt file (no media) into structured messages.
+ * 🤖 IA COMPLETA: Gemini hace TODO el trabajo del parser
+ *
+ * Esta función delega TODAS las responsabilidades al modelo de IA:
+ * ✅ Lectura y análisis del archivo WhatsApp
+ * ✅ Identificación de mensajes de comida
+ * ✅ Extracción de información (usuario, fecha, hora)
+ * ✅ Análisis nutricional detallado (carbs, proteínas, verduras)
+ * ✅ Clasificación por tipo de comida (desayuno, almuerzo, etc.)
+ * ✅ Estandarización de datos (formatos YYYY-MM-DD, HH:MM)
+ * ✅ Filtrado de mensajes irrelevantes
+ * ✅ Agrupación inteligente de comidas por usuario/fecha
+ *
+ * La IA es el "cerebro completo" de la aplicación.
  */
-export function parseWhatsAppExport(txt: string): WhatsAppMessage[] {
-  const lines = txt.split(/\r?\n/);
+export async function parseWhatsAppWithAI(whatsappText: string): Promise<{
+  success: boolean;
+  messages: GeminiMealRecord[];
+  totalMessagesFound: number;
+  foodMessagesFound: number;
+  error?: string;
+}> {
+  try {
+    console.log("🚀 🤖 Iniciando procesamiento con IA...");
+    console.log("📄 Archivo recibido:", whatsappText.length, "caracteres");
 
-  type Pending = {
-    dateStr: string;
-    timeStr: string;
-    ampm?: string | null;
-    user: string;
-    textLines: string[];
-    rawLines: string[];
-  } | null;
+    // Crear prompt completo con instrucciones detalladas
+    const prompt = createWhatsAppParsingPrompt(whatsappText);
 
-  let pending: Pending = null;
-  const messages: WhatsAppMessage[] = [];
+    console.log("🎯 Enviando a Gemini para análisis completo...");
+    const analysisResult = await analyzeWithGemini(prompt);
 
-  for (const line of lines) {
-    const meta = detectMessageStart(line);
-    if (meta) {
-      // flush previous
-      if (pending) {
-        const { date, time } = normalizeDateTime(pending.dateStr, pending.timeStr, pending.ampm ?? undefined);
-        messages.push({
-          date,
-          time,
-          user: pending.user,
-          text: pending.textLines.join("\n").trim(),
-          raw: pending.rawLines.join("\n"),
-        });
-      }
-
-      const { dateStr, timeStr, ampm, rest } = meta;
-      const { user, text } = parseUserAndText(rest);
-      pending = {
-        dateStr,
-        timeStr,
-        ampm: ampm ?? null,
-        user,
-        textLines: [text],
-        rawLines: [line],
+    if (!analysisResult.success) {
+      return {
+        success: false,
+        messages: [],
+        totalMessagesFound: 0,
+        foodMessagesFound: 0,
+        error: analysisResult.error
       };
-    } else if (pending) {
-      // continuation of previous message
-      pending.textLines.push(line);
-      pending.rawLines.push(line);
-    } else {
-      // Ignore leading lines until we detect the first message header
-      continue;
     }
-  }
 
-  // flush last pending
-  if (pending) {
-    const { date, time } = normalizeDateTime(pending.dateStr, pending.timeStr, pending.ampm ?? undefined);
-    messages.push({
-      date,
-      time,
-      user: pending.user,
-      text: pending.textLines.join("\n").trim(),
-      raw: pending.rawLines.join("\n"),
+    console.log("✅ 🤖 Procesamiento completado exitosamente");
+    console.log("📊 Resultados:", {
+      mensajesAnalizados: analysisResult.totalMessagesFound,
+      comidasEncontradas: analysisResult.foodMessagesFound,
+      usuarios: analysisResult.messages.length
     });
-  }
 
-  return messages;
+    return {
+      success: true,
+      messages: analysisResult.messages,
+      totalMessagesFound: analysisResult.totalMessagesFound,
+      foodMessagesFound: analysisResult.foodMessagesFound
+    };
+
+  } catch (error) {
+    console.error("❌ Error en parsing con IA:", error);
+    return {
+      success: false,
+      messages: [],
+      totalMessagesFound: 0,
+      foodMessagesFound: 0,
+      error: error instanceof Error ? error.message : "Error desconocido en parsing con IA"
+    };
+  }
+}
+
+
+
+/**
+ * Crea el prompt completo para que Gemini haga TODO el trabajo del parser
+ */
+function createWhatsAppParsingPrompt(whatsappText: string): string {
+  // Limitar el texto si es muy largo para no exceder límites de tokens
+  const maxLength = 80000; // Aumentar límite para archivos más grandes
+  const truncatedText = whatsappText.length > maxLength
+    ? whatsappText.substring(0, maxLength) + "\n\n[TEXTO TRUNCADO - ARCHIVO MUY LARGO]"
+    : whatsappText;
+
+  const instructions = `ERES UN ANALIZADOR DE MENSAJES DE WHATSAPP ESPECIALIZADO EN NUTRICIÓN.
+
+TRABAJO COMPLETO QUE DEBES REALIZAR:
+
+1. 📖 LECTURA Y ANÁLISIS DEL ARCHIVO:
+   - Lee todo el contenido del archivo de WhatsApp
+   - Identifica el formato de mensajes (corchetes, timestamps, usuarios)
+   - Separa mensajes válidos de mensajes del sistema
+
+2. 🔍 IDENTIFICACIÓN DE MENSAJES DE COMIDA:
+   - Busca TODOS los mensajes que mencionen alimentos, comidas o bebidas
+   - Detecta expresiones informales: "comí", "desayuné", "almorcé", etc.
+   - Incluye menciones a productos: "pan", "leche", "carne", etc.
+   - Considera contextos nutricionales implícitos
+
+3. 📊 EXTRACCIÓN DE INFORMACIÓN:
+   - Extrae usuario, fecha y hora de cada mensaje
+   - Identifica el contenido relacionado con comida
+   - Agrupa comidas relacionadas del mismo usuario en la misma fecha
+
+4. 🥗 ANÁLISIS NUTRICIONAL DETALLADO:
+   - CARBOHIDRATOS: pan, pasta, arroz, cereales, papas, azúcar, frutas
+   - PROTEÍNAS: carne, pollo, pescado, huevos, queso, leche, legumbres, tofu
+   - VERDURAS: lechuga, tomate, zanahoria, espinaca, brócoli, etc.
+   - BEBIDAS: café, té, jugos, agua, refrescos (clasificar nutricionalmente)
+
+5. 📅 CLASIFICACIÓN POR TIPO DE COMIDA:
+   - BREAKFAST: 6:00-11:00 (desayuno, desayuno, almuerzo temprano)
+   - LUNCH: 11:00-16:00 (almuerzo, comida, lunch)
+   - DINNER: 16:00-22:00 (cena, dinner)
+   - SNACK: otras horas (snack, merienda, tentempié)
+
+6. 🗓️ ESTANDARIZACIÓN DE DATOS:
+   - Fechas: formato YYYY-MM-DD
+   - Horas: formato HH:MM (24 horas)
+   - Usuarios: nombres limpios sin caracteres especiales
+   - Items: lista de alimentos específicos mencionados
+
+7. 🚫 FILTROS DE EXCLUSIÓN:
+   - Mensajes del sistema: "se unió", "cambió el asunto"
+   - Multimedia: "multimedia omitido", "imagen omitida"
+   - Notificaciones: "mensajes y llamadas", "cambió a"
+   - Mensajes vacíos o irrelevantes`;
+
+  return `${instructions}
+
+FORMATO DE SALIDA (JSON estricto - EJEMPLO COMPLETO):
+{
+  "totalMessagesFound": 15,
+  "foodMessagesFound": 8,
+  "meals": [
+    {
+      "userId": "Juan Pérez",
+      "date": "2024-12-31",
+      "meals": [
+        {
+          "time": "08:30",
+          "type": "breakfast",
+          "items": ["tostadas integrales", "jamón", "queso", "café negro"],
+          "has_carb": true,
+          "has_protein": true,
+          "has_veggies": false,
+          "notes": "desayuno completo con cafeína"
+        },
+        {
+          "time": "13:15",
+          "type": "lunch",
+          "items": ["pollo grill", "arroz blanco", "ensalada mixta", "agua"],
+          "has_carb": true,
+          "has_protein": true,
+          "has_veggies": true,
+          "notes": "comida balanceada con proteína magra"
+        }
+      ]
+    },
+    {
+      "userId": "María García",
+      "date": "2024-12-31",
+      "meals": [
+        {
+          "time": "09:00",
+          "type": "breakfast",
+          "items": ["cereal de avena", "leche", "plátano", "yogur natural"],
+          "has_carb": true,
+          "has_protein": true,
+          "has_veggies": false,
+          "notes": "desayuno saludable con frutas"
+        }
+      ]
+    }
+  ]
+}
+
+INSTRUCCIONES DE SALIDA CRÍTICAS:
+- Devuelve ÚNICAMENTE el JSON válido, sin NINGUNA explicación adicional
+- NO incluyas \`\`\`json, \`\`\`, o marcadores de código
+- NO incluyas frases como "Aquí está:", "Resultado:", "JSON:", etc.
+- El JSON debe comenzar con { y terminar con }
+- Usa comillas dobles (") para todas las strings
+- Si no encuentras comidas, devuelve: {"totalMessagesFound": 0, "foodMessagesFound": 0, "meals": []}
+
+ARCHIVO DE WHATSAPP A ANALIZAR:
+${truncatedText}`;
 }
 
 /**
- * Predicate to determine whether a message likely describes food.
+ * Función auxiliar para analizar con Gemini usando el prompt específico
  */
-export function isFoodRelatedMessage(msg: WhatsAppMessage): boolean {
-  if (!msg.text) return false;
-  const text = msg.text.toLowerCase();
-  if (msg.user.toLowerCase() === "system") return false;
+async function analyzeWithGemini(prompt: string): Promise<{
+  success: boolean;
+  messages: GeminiMealRecord[];
+  totalMessagesFound: number;
+  foodMessagesFound: number;
+  error?: string;
+}> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("Missing GEMINI_API_KEY env var");
+  }
 
-  // Ignore media/system-like messages
-  const ignoreTokens = [
-    "multimedia omitido",
-    "omitted",
-    "imagen omitida",
-    "mensajes y llamadas",
-    "changed the subject",
-    "cambió el asunto",
-    "changed to",
-    "se unió usando el enlace",
-  ];
-  if (ignoreTokens.some((t) => text.includes(t))) return false;
+  const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
-  const mealTokens = [
-    // Spanish
-    "desayuno",
-    "almuerzo",
-    "comida",
-    "cena",
-    "merienda",
-    "snack",
-    "desayuné",
-    "almorcé",
-    "cené",
-    "comí",
-    // English
-    "breakfast",
-    "lunch",
-    "dinner",
-  ];
+  const body = {
+    contents: [
+      {
+        role: "user",
+        parts: [{ text: prompt }]
+      },
+    ],
+    generationConfig: {
+      temperature: 0.0, // Temperatura 0 para máxima consistencia
+      topP: 1.0,
+      maxOutputTokens: 8192,
+      responseMimeType: "application/json", // Especificar que queremos JSON
+    },
+  };
 
-  const foodWords = [
-    "ensalada",
-    "pollo",
-    "huevo",
-    "huevos",
-    "carne",
-    "arroz",
-    "pasta",
-    "verdura",
-    "verduras",
-    "fruta",
-    "frutas",
-    "sandwich",
-    "sándwich",
-    "yogur",
-    "yogurt",
-    "cereal",
-    "tostadas",
-    "avena",
-    "sopa",
-    "pizza",
-    "empanada",
-    "tarta",
-    "pescado",
-    "legumbre",
-    "legumbres",
-  ];
+  const res = await fetch(`${url}?key=${apiKey}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
 
-  return mealTokens.some((t) => text.includes(t)) || countMatches(text, foodWords) >= 2;
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Gemini API error: ${res.status} ${errText}`);
+  }
+
+  const data = await res.json();
+  const textOut = extractTextFromGeminiResponse(data);
+
+  try {
+    // Limpiar la respuesta de Gemini
+    let cleanJson = textOut.trim();
+
+    // Remover posibles marcadores de código
+    cleanJson = cleanJson.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+    cleanJson = cleanJson.replace(/^```\s*/, '').replace(/\s*```$/, '');
+
+    // Remover posibles prefijos como "Aquí está:" o "Resultado:"
+    cleanJson = cleanJson.replace(/^(Aquí está|Resultado|Respuesta|JSON)[:.]?\s*/i, '');
+
+    // Encontrar el JSON real (buscar el primer { y el último })
+    const startIndex = cleanJson.indexOf('{');
+    const lastIndex = cleanJson.lastIndexOf('}');
+
+    if (startIndex === -1 || lastIndex === -1 || startIndex >= lastIndex) {
+      throw new Error("No se pudo encontrar JSON válido en la respuesta");
+    }
+
+    cleanJson = cleanJson.substring(startIndex, lastIndex + 1);
+
+    console.log("JSON limpio a parsear:", cleanJson.substring(0, 200) + "...");
+
+    let parsed = JSON.parse(cleanJson);
+
+    // Validar la estructura de respuesta
+    if (!parsed || typeof parsed !== 'object') {
+      throw new Error("Respuesta parseada no es un objeto válido");
+    }
+
+    if (!parsed.meals || !Array.isArray(parsed.meals)) {
+      console.warn("Estructura de respuesta no estándar, intentando adaptar...");
+
+      // Intentar adaptar respuestas con estructura diferente
+      if (parsed.data && Array.isArray(parsed.data)) {
+        parsed.meals = parsed.data;
+      } else if (parsed.results && Array.isArray(parsed.results)) {
+        parsed.meals = parsed.results;
+      } else if (Array.isArray(parsed)) {
+        // Si es un array directo, asumirlo como meals
+        parsed = { meals: parsed, totalMessagesFound: parsed.length, foodMessagesFound: parsed.length };
+      } else {
+        throw new Error("No se pudo encontrar estructura de meals en la respuesta");
+      }
+    }
+
+    return {
+      success: true,
+      messages: parsed.meals,
+      totalMessagesFound: parsed.totalMessagesFound || parsed.meals.length,
+      foodMessagesFound: parsed.foodMessagesFound || parsed.meals.length
+    };
+
+  } catch (parseError) {
+    console.error("Error parseando respuesta de Gemini:", parseError);
+    console.error("Respuesta original:", textOut.substring(0, 500));
+
+    // Intentar extraer JSON usando expresiones regulares como último recurso
+    try {
+      const jsonMatch = textOut.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        const fallbackJson = JSON.parse(jsonMatch[0]);
+        console.log("JSON extraído con regex como fallback");
+        return {
+          success: true,
+          messages: fallbackJson.meals || [],
+          totalMessagesFound: fallbackJson.totalMessagesFound || 0,
+          foodMessagesFound: fallbackJson.foodMessagesFound || 0
+        };
+      }
+    } catch (fallbackError) {
+      console.error("Fallback también falló:", fallbackError);
+    }
+
+    throw new Error(`La respuesta de Gemini no es JSON válido: ${parseError instanceof Error ? parseError.message : 'Error desconocido'}`);
+  }
 }
 
 /**
- * Convenience helper to directly extract only food-related messages from raw export text.
+ * Extrae el texto de la respuesta de Gemini
  */
-export function extractFoodMessages(txt: string): WhatsAppMessage[] {
-  const all = parseWhatsAppExport(txt);
-  return all.filter(isFoodRelatedMessage);
-}
+function extractTextFromGeminiResponse(data: any): string {
+  const candidates = data.candidates;
+  const partText = candidates?.[0]?.content?.parts?.[0]?.text;
+  if (typeof partText === "string" && partText.trim()) return partText.trim();
 
-type DetectedStart = {
-  dateStr: string;
-  timeStr: string;
-  ampm?: string;
-  rest: string; // the content after "] " or " - "
-  style: "bracket" | "dash";
-} | null;
-
-function detectMessageStart(line: string): DetectedStart {
-  // [dd/mm/yy, HH:MM AM/PM] Name: text
-  const bracket = line.match(/^\[(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}),\s+(\d{1,2}:\d{2})(?:\s*([APap][Mm]))?\]\s(.+)$/);
-  if (bracket) {
-    return {
-      dateStr: bracket[1],
-      timeStr: bracket[2],
-      ampm: bracket[3],
-      rest: bracket[4],
-      style: "bracket",
-    };
+  const parts = candidates?.[0]?.content?.parts;
+  if (Array.isArray(parts)) {
+    const joined = parts.map((p: any) => (typeof p?.text === "string" ? p.text : "")).join("");
+    if (joined.trim()) return joined.trim();
   }
 
-  // dd/mm/yy, HH:MM AM/PM - rest OR dd/mm/yy HH:MM - rest
-  const dash = line.match(/^(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})(?:,)?\s+(\d{1,2}:\d{2})(?:\s*([APap][Mm]))?\s-\s(.+)$/);
-  if (dash) {
-    return {
-      dateStr: dash[1],
-      timeStr: dash[2],
-      ampm: dash[3],
-      rest: dash[4],
-      style: "dash",
-    };
-  }
-
-  return null;
-}
-
-function parseUserAndText(rest: string): { user: string; text: string } {
-  // In both styles, after header we often have "Name: message".
-  // Some system messages have no colon/user.
-  const colonIdx = rest.indexOf(": ");
-  if (colonIdx !== -1) {
-    const user = rest.slice(0, colonIdx).trim();
-    const text = rest.slice(colonIdx + 2);
-    return { user: user || "Unknown", text };
-  }
-  // No user present
-  return { user: "System", text: rest };
-}
-
-function normalizeDateTime(dateStr: string, timeStr: string, ampm?: string): { date: string; time: string } {
-  // Date: dd/mm/yy or dd/mm/yyyy or with '-'
-  const sep = dateStr.includes("/") ? "/" : "-";
-  const [p1, p2, p3] = dateStr.split(sep).map((p) => p.trim());
-
-  const day = parseInt(p1, 10);
-  const month = parseInt(p2, 10);
-  let year = parseInt(p3, 10);
-
-  // Heuristic: if first part <= 12 and second part > 12, still dd/mm works; if both <=12, assume dd/mm (common in ES exports)
-  // If year < 100, assume 2000+
-  if (year < 100) year += 2000;
-
-  const date = `${pad2(year)}-${pad2(month)}-${pad2(day)}`;
-
-  // Time: HH:MM with optional AM/PM
-  const [hStr, mStr] = timeStr.split(":");
-  let hour = parseInt(hStr, 10);
-  const minute = parseInt(mStr, 10);
-  if (ampm) {
-    const a = ampm.toLowerCase();
-    if (a === "pm" && hour < 12) hour += 12;
-    if (a === "am" && hour === 12) hour = 0;
-  }
-  const time = `${pad2(hour)}:${pad2(minute)}`;
-
-  return { date, time };
-}
-
-function pad2(n: number): string {
-  return n.toString().padStart(2, "0");
-}
-
-function countMatches(text: string, words: string[]): number {
-  let count = 0;
-  for (const w of words) {
-    if (text.includes(w)) count++;
-  }
-  return count;
+  throw new Error("Gemini response missing text");
 }
 
 

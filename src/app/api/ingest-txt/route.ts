@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { extractFoodMessages } from "@/lib/parser";
-import { analyzeFoodMessageWithGemini } from "@/lib/gemini";
+import { parseWhatsAppWithAI } from "@/lib/parser";
 import { appendRowsToSheet, SheetRow } from "@/lib/sheets";
 
 export const runtime = "nodejs";
@@ -25,20 +24,39 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const foodMessages = extractFoodMessages(text);
-    if (foodMessages.length === 0) {
-      return NextResponse.json({ processed: 0, appended: 0, records: [] });
+    console.log("🤖 Iniciando procesamiento con IA...");
+    console.log("📄 Longitud del archivo:", text.length);
+
+    // Usar el parser con IA para todo el procesamiento
+    const aiResult = await parseWhatsAppWithAI(text);
+
+    if (!aiResult.success) {
+      console.error("❌ Error en procesamiento con IA:", aiResult.error);
+      return NextResponse.json({
+        processed: 0,
+        appended: 0,
+        records: [],
+        error: aiResult.error || "Error desconocido en procesamiento con IA",
+        debug: {
+          totalMessages: aiResult.totalMessagesFound,
+          foodMessages: aiResult.foodMessagesFound,
+          fileLength: text.length,
+          aiProcessed: true,
+          mode: 'standard'
+        }
+      });
     }
 
-    const records: { inputText: string; record: { userId: string; date: string; meals: { time: string; type: string; items: string[]; has_carb: boolean; has_protein: boolean; has_veggies: boolean; notes: string }[] } }[] = [];
-    for (const msg of foodMessages) {
-      const record = await analyzeFoodMessageWithGemini({ userId: msg.user, date: msg.date, message: msg.text });
-      records.push({ inputText: msg.text, record });
-    }
+    console.log("✅ Procesamiento con IA completado exitosamente");
+    console.log(`📊 Total de mensajes encontrados: ${aiResult.totalMessagesFound}`);
+    console.log(`🍽️ Mensajes de comida procesados: ${aiResult.foodMessagesFound}`);
 
-    // Flatten to sheet rows
+    // Usar directamente los resultados del parser con IA
+    const records = aiResult.messages;
+
+    // Convertir los resultados de IA a filas para Google Sheets
     const rows: SheetRow[] = [];
-    for (const { record } of records) {
+    for (const record of records) {
       for (const meal of record.meals) {
         rows.push({
           date: record.date,
@@ -54,9 +72,42 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const result = await appendRowsToSheet(rows);
+    console.log(`Intentando guardar ${rows.length} filas en Google Sheets...`);
 
-    return NextResponse.json({ processed: foodMessages.length, appended: result.appended, records });
+    try {
+      const result = await appendRowsToSheet(rows);
+      console.log("Datos guardados exitosamente en Google Sheets:", result);
+      return NextResponse.json({
+        processed: aiResult.foodMessagesFound,
+        appended: result.appended,
+        records: aiResult.messages,
+        debug: {
+          totalMessages: aiResult.totalMessagesFound,
+          foodMessages: aiResult.foodMessagesFound,
+          fileLength: text.length,
+          aiProcessed: true,
+          mode: 'standard'
+        }
+      });
+    } catch (error) {
+      console.error("Error guardando en Google Sheets:", error);
+      // Devolver respuesta parcial indicando que los datos se procesaron pero no se guardaron
+      return NextResponse.json({
+        processed: aiResult.foodMessagesFound,
+        appended: 0,
+        records: aiResult.messages,
+        warning: "Los datos se procesaron correctamente con IA pero no se pudieron guardar en Google Sheets",
+        error: error instanceof Error ? error.message : "Error desconocido en Google Sheets",
+        debug: {
+          totalMessages: aiResult.totalMessagesFound,
+          foodMessages: aiResult.foodMessagesFound,
+          fileLength: text.length,
+          aiProcessed: true,
+          sheetsError: true,
+          mode: 'standard'
+        }
+      });
+    }
   } catch (error) {
     return NextResponse.json({ error: (error as Error).message }, { status: 500 });
   }

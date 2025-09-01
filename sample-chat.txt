@@ -1,0 +1,16 @@
+[31/12/24, 08:15:00] Ana García: Buenos días a todos! Hoy me levanté temprano y desayuné avena con leche, plátano y un café negro
+[31/12/24, 08:20:30] Carlos López: Yo tomé tostadas integrales con aguacate y huevo pochado. Rico pero tardé en hacer el huevo 🙃
+[31/12/24, 08:25:45] Ana García: Qué rico suena! Yo también agregué un yogur griego natural
+[31/12/24, 09:10:15] María Rodríguez: Chicos, yo me conformé con un café con leche y una galleta de avena. Tuve que salir corriendo al trabajo
+[31/12/24, 13:30:00] Carlos López: Almorcé en el trabajo: ensalada de pollo grill con lechuga, tomate, pepino y aderezo de yogur. Proteína sana! 💪
+[31/12/24, 13:45:20] Ana García: Yo pedí sushi: nigiri de salmón, uramaki de california y una sopa miso. Delicioso pero caro 😅
+[31/12/24, 14:00:05] María Rodríguez: Yo comí pasta integral con salsa de tomate casera y albóndigas de carne. Mi especialidad!
+[31/12/24, 14:15:30] Carlos López: Suena increíble María! ¿Compartís la receta de la salsa?
+[31/12/24, 16:30:00] Ana García: Merienda: una manzana roja y un puñado de almendras. Necesito energía para el gym
+[31/12/24, 17:00:00] María Rodríguez: Yo tomé un licuado de frutas: plátano, fresa, leche de almendras y proteína en polvo
+[31/12/24, 20:15:00] Carlos López: Cena familiar: pollo al horno con papas asadas, brócoli al vapor y una ensalada mixta. Saludable y abundante
+[31/12/24, 20:30:00] Ana García: Yo hice salmón a la plancha con quinoa, espárragos salteados y una vinagreta de limón. ¡Muy rico!
+[31/12/24, 20:45:15] María Rodríguez: Mi cena fue más simple: tortilla española con ensalada de canónigos y un vaso de agua con limón
+[31/12/24, 21:30:00] Carlos López: Postre: yogur con arándanos frescos. ¿Alguien más?
+[31/12/24, 21:35:00] Ana García: Yo me conformé con una infusión de manzanilla. Mañana gym temprano
+[31/12/24, 22:00:00] María Rodríguez: Yo tomé una pera. Dulce natural perfecto para terminar el día
