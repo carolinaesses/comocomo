@@ -16,8 +16,17 @@ type GeminiMealRecord = {
   }[];
 };
 
+type DebugInfo = {
+  totalMessages: number;
+  foodMessages: number;
+  fileLength: number;
+  aiProcessed: boolean;
+  mode: string;
+  sheetsError?: boolean;
+};
+
 type ApiResponse =
-  | { processed: number; appended: number; records: { inputText: string; record: GeminiMealRecord }[]; debug?: any; warning?: string; error?: string }
+  | { processed: number; appended: number; records: { inputText: string; record: GeminiMealRecord }[]; debug?: DebugInfo; warning?: string; error?: string }
   | { error: string };
 
 export default function Home() {

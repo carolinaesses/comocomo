@@ -1,4 +1,4 @@
-import { analyzeFoodMessageWithGemini, GeminiMealRecord } from "./gemini";
+import { GeminiMealRecord } from "./gemini";
 
 export interface WhatsAppMessage {
   date: string; // YYYY-MM-DD
@@ -16,6 +16,23 @@ export interface WhatsAppMessage {
 
 // TODAS LAS FUNCIONES AUXILIARES ELIMINADAS
 // La IA maneja completamente el parsing, extracción y análisis
+
+// Tipos para la respuesta de Gemini
+interface GeminiPart {
+  text?: string;
+}
+
+interface GeminiContent {
+  parts?: GeminiPart[];
+}
+
+interface GeminiCandidate {
+  content?: GeminiContent;
+}
+
+interface GeminiResponse {
+  candidates?: GeminiCandidate[];
+}
 
 /**
  * 🤖 IA COMPLETA: Gemini hace TODO el trabajo del parser
@@ -245,7 +262,7 @@ async function analyzeWithGemini(prompt: string): Promise<{
     throw new Error(`Gemini API error: ${res.status} ${errText}`);
   }
 
-  const data = await res.json();
+  const data: GeminiResponse = await res.json();
   const textOut = extractTextFromGeminiResponse(data);
 
   try {
@@ -329,14 +346,14 @@ async function analyzeWithGemini(prompt: string): Promise<{
 /**
  * Extrae el texto de la respuesta de Gemini
  */
-function extractTextFromGeminiResponse(data: any): string {
+function extractTextFromGeminiResponse(data: GeminiResponse): string {
   const candidates = data.candidates;
   const partText = candidates?.[0]?.content?.parts?.[0]?.text;
   if (typeof partText === "string" && partText.trim()) return partText.trim();
 
   const parts = candidates?.[0]?.content?.parts;
   if (Array.isArray(parts)) {
-    const joined = parts.map((p: any) => (typeof p?.text === "string" ? p.text : "")).join("");
+    const joined = parts.map((p: GeminiPart) => (typeof p?.text === "string" ? p.text : "")).join("");
     if (joined.trim()) return joined.trim();
   }
 

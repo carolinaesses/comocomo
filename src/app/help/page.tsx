@@ -38,8 +38,8 @@ export default function HelpPage() {
               <li>Abre WhatsApp en tu teléfono</li>
               <li>Ve al chat que quieres exportar</li>
               <li>Toca los tres puntos (⋮) en la esquina superior derecha</li>
-              <li>Selecciona "Más" → "Exportar chat"</li>
-              <li>Elige "Sin archivos multimedia" (importante)</li>
+              <li>Selecciona &quot;Más&quot; → &quot;Exportar chat&quot;</li>
+              <li>Elige &quot;Sin archivos multimedia&quot; (importante)</li>
               <li>Guarda el archivo .txt generado</li>
             </ol>
           </div>
