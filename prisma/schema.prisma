@@ -1,0 +1,94 @@
+// Datasource and generator
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum MealType {
+  breakfast
+  lunch
+  dinner
+  snack
+}
+
+// Models
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  meals       Meal[]
+  idealDiets  IdealDiet[]
+  dailyScores DailyScore[]
+
+  @@map("users")
+}
+
+model Meal {
+  id           String   @id @default(cuid())
+  userId       String
+  date         DateTime // normalized to user TZ midnight
+  time         String   // "HH:MM" 24h
+  type         MealType
+  items        String   // comma-separated short items
+  has_carb     Boolean
+  has_protein  Boolean
+  has_veggies  Boolean
+  notes        String?  @db.Text
+  createdAt    DateTime @default(now())
+
+  user         User     @relation(fields: [userId], references: [id])
+
+  @@index([userId, date])
+  @@unique([userId, date, time, type, items])
+  @@index([userId])
+}
+
+model IdealDiet {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  ideal_carb     Boolean
+  ideal_protein  Boolean
+  ideal_veggies  Boolean
+  notes          String?  @db.Text
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user           User              @relation(fields: [userId], references: [id])
+  mealRules      IdealDietMealRule[]
+}
+
+model IdealDietMealRule {
+  id              String   @id @default(cuid())
+  idealDietId     String
+  mealType        MealType
+  expect_carb     Boolean
+  expect_protein  Boolean
+  expect_veggies  Boolean
+  IdealDiet       IdealDiet @relation(fields: [idealDietId], references: [id], onDelete: Cascade)
+
+  @@unique([idealDietId, mealType])
+}
+
+model DailyScore {
+  id         String   @id @default(cuid())
+  userId     String
+  date       DateTime
+  score      Int
+  details    Json
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, date])
+  @@index([userId])
+}
+
+
