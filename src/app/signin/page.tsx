@@ -93,6 +93,16 @@ function AuthContent() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Campo oculto para accesibilidad - username field para password forms */}
+              <input
+                type="email"
+                name="username"
+                autoComplete="username"
+                value={email}
+                readOnly
+                className="sr-only"
+                aria-hidden="true"
+              />
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-300">
                   Correo electrónico
