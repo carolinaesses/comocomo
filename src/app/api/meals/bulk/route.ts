@@ -22,11 +22,33 @@ const BulkSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    // Obtener el userId del usuario autenticado desde las cookies
+    const getCookie = (name: string) => {
+      const value = `; ${req.headers.get('cookie') || ''}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop()?.split(';').shift();
+    };
+
+    const userCookie = getCookie("comocomo-user");
+    if (!userCookie) {
+      return NextResponse.json({ error: "Usuario no autenticado" }, { status: 401 });
+    }
+
+    let authenticatedUserId: string;
+    try {
+      const userData = JSON.parse(decodeURIComponent(userCookie));
+      authenticatedUserId = userData.id;
+    } catch (error) {
+      return NextResponse.json({ error: "Sesión inválida" }, { status: 401 });
+    }
+
+    console.log("👤 Usuario autenticado para bulk import:", authenticatedUserId);
+
     const json = await req.json();
     const body = BulkSchema.parse(json);
 
     const data = body.records.map((r) => ({
-      userId: r.userId,
+      userId: authenticatedUserId, // Usar el usuario autenticado, NO r.userId
       date: normalizeDateToUTC(r.date),
       time: r.time,
       type: r.type,
@@ -48,19 +70,15 @@ export async function POST(req: NextRequest) {
     );
 
     // Recalculate scores per day touched
-    const byUserDate = new Map<string, Set<string>>();
+    const dates = new Set<string>();
     for (const r of body.records) {
-      const key = r.userId;
-      const set = byUserDate.get(key) || new Set<string>();
-      set.add(r.date);
-      byUserDate.set(key, set);
+      dates.add(r.date);
     }
-    for (const [userId, dates] of byUserDate.entries()) {
-      const sorted = Array.from(dates).sort();
-      const from = sorted[0];
-      const to = sorted[sorted.length - 1];
-      await recalcDailyScores({ userId, from, to });
-    }
+
+    const sorted = Array.from(dates).sort();
+    const from = sorted[0];
+    const to = sorted[sorted.length - 1];
+    await recalcDailyScores({ userId: authenticatedUserId, from, to });
 
     return NextResponse.json({ inserted: created.length });
   } catch (e) {

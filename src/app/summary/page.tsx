@@ -105,25 +105,25 @@ export default function SummaryPage() {
   if (!data && !loading) {
     return (
       <div className="p-4 space-y-4">
-        <h1 className="text-lg font-semibold text-center">📊 Resumen y Estadísticas</h1>
+        <h1 className="text-lg font-semibold text-center text-white">📊 Resumen y Estadísticas</h1>
         <div className="space-y-3">
           <div className="grid grid-cols-2 gap-2">
-            <input className="border rounded px-3 py-2 text-sm" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
-            <input className="border rounded px-3 py-2 text-sm" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
+            <input className="bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm text-white" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
+            <input className="bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm text-white" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
           </div>
-          <button className="bg-blue-600 text-white rounded px-4 py-2 text-sm w-full" onClick={fetchData} disabled={loading}>
+          <button className="bg-blue-600 hover:bg-blue-700 text-white rounded px-4 py-2 text-sm w-full transition-colors" onClick={fetchData} disabled={loading}>
             {loading ? "Cargando..." : "Generar Reporte"}
           </button>
         </div>
 
         {!userId && (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-gray-400">
             <div className="text-4xl mb-4">📊</div>
             <div className="text-sm">Inicia sesión para ver tus estadísticas</div>
           </div>
         )}
 
-        {error && <div className="text-red-600 text-sm text-center">{error}</div>}
+        {error && <div className="text-red-400 text-sm text-center">{error}</div>}
       </div>
     );
   }
@@ -131,7 +131,7 @@ export default function SummaryPage() {
   if (!data) {
     return (
       <div className="p-6">
-        <div className="text-gray-600">Cargando...</div>
+        <div className="text-gray-400">Cargando...</div>
       </div>
     );
   }
@@ -195,61 +195,61 @@ export default function SummaryPage() {
 
   return (
     <div className="p-4 space-y-4">
-      <h1 className="text-lg font-semibold text-center">📊 Resumen y Estadísticas</h1>
+      <h1 className="text-lg font-semibold text-center text-white">📊 Resumen y Estadísticas</h1>
 
               <div className="space-y-3">
           <div className="grid grid-cols-2 gap-2">
-          <input className="border rounded px-3 py-2 text-sm" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
-          <input className="border rounded px-3 py-2 text-sm" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
+          <input className="bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm text-white" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
+          <input className="bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm text-white" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
         </div>
-        <button className="bg-blue-600 text-white rounded px-4 py-2 text-sm w-full" onClick={fetchData} disabled={loading}>
+        <button className="bg-blue-600 hover:bg-blue-700 text-white rounded px-4 py-2 text-sm w-full transition-colors" onClick={fetchData} disabled={loading}>
           {loading ? "Cargando..." : "Actualizar"}
         </button>
       </div>
 
-      {error && <div className="text-red-600">{error}</div>}
+      {error && <div className="text-red-400">{error}</div>}
 
       <div className="space-y-4">
-        <div className="bg-white rounded-lg shadow-sm border p-4">
-          <h2 className="text-base font-medium mb-3 text-center">🎯 Cumplimiento de Ejes Diarios</h2>
+        <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-700 p-4">
+          <h2 className="text-base font-medium mb-3 text-center text-white">🎯 Cumplimiento de Ejes Diarios</h2>
           <div className="space-y-3">
-            <div className="flex justify-between items-center p-2 bg-yellow-50 rounded">
-              <span className="text-sm flex items-center gap-2"><span className="text-lg">🍞</span> Carbohidratos</span>
-              <span className="font-bold text-lg">{carbPct}%</span>
+            <div className="flex justify-between items-center p-2 bg-gray-700 rounded">
+              <span className="text-sm flex items-center gap-2 text-gray-200"><span className="text-lg">🍞</span> Carbohidratos</span>
+              <span className="font-bold text-lg text-white">{carbPct}%</span>
             </div>
-            <div className="flex justify-between items-center p-2 bg-red-50 rounded">
-              <span className="text-sm flex items-center gap-2"><span className="text-lg">🥩</span> Proteína</span>
-              <span className="font-bold text-lg">{proteinPct}%</span>
+            <div className="flex justify-between items-center p-2 bg-gray-700 rounded">
+              <span className="text-sm flex items-center gap-2 text-gray-200"><span className="text-lg">🥩</span> Proteína</span>
+              <span className="font-bold text-lg text-white">{proteinPct}%</span>
             </div>
-            <div className="flex justify-between items-center p-2 bg-green-50 rounded">
-              <span className="text-sm flex items-center gap-2"><span className="text-lg">🥕</span> Verduras</span>
-              <span className="font-bold text-lg">{veggiesPct}%</span>
+            <div className="flex justify-between items-center p-2 bg-gray-700 rounded">
+              <span className="text-sm flex items-center gap-2 text-gray-200"><span className="text-lg">🥕</span> Verduras</span>
+              <span className="font-bold text-lg text-white">{veggiesPct}%</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border p-4">
-          <h2 className="text-base font-medium mb-3 text-center">📋 Cumplimiento por Comida</h2>
+        <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-700 p-4">
+          <h2 className="text-base font-medium mb-3 text-center text-white">📋 Cumplimiento por Comida</h2>
           <div className="space-y-2">
             {rulePcts.map((item) => (
-              <div key={item.type} className="flex justify-between items-center p-2 bg-blue-50 rounded">
-                <span className="text-sm capitalize">{item.type}</span>
-                <span className="font-bold text-lg">{item.pct}%</span>
+              <div key={item.type} className="flex justify-between items-center p-2 bg-gray-700 rounded">
+                <span className="text-sm capitalize text-gray-200">{item.type}</span>
+                <span className="font-bold text-lg text-white">{item.pct}%</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border p-4">
-          <h2 className="text-base font-medium mb-3 text-center">📈 Serie de Scores</h2>
+        <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-700 p-4">
+          <h2 className="text-base font-medium mb-3 text-center text-white">📈 Serie de Scores</h2>
           <div className="space-y-2 max-h-32 overflow-y-auto">
             {scoreSeries.map((item) => (
               <div key={item.date} className="flex justify-between items-center text-sm p-1">
-                <span className="text-gray-600">{item.date}</span>
+                <span className="text-gray-300">{item.date}</span>
                 <span className={`font-bold ${
-                  item.score < 20 ? "text-red-600" :
-                  item.score < 40 ? "text-yellow-600" :
-                  "text-green-600"
+                  item.score < 20 ? "text-red-400" :
+                  item.score < 40 ? "text-yellow-400" :
+                  "text-green-400"
                 }`}>
                   {item.score}
                 </span>
@@ -259,26 +259,26 @@ export default function SummaryPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border p-4">
-        <h2 className="text-base font-medium mb-4 text-center">📊 Métricas Generales</h2>
+      <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-700 p-4">
+        <h2 className="text-base font-medium mb-4 text-center text-white">📊 Métricas Generales</h2>
         <div className="grid grid-cols-2 gap-4">
-          <div className="text-center p-3 bg-blue-50 rounded-lg">
-            <div className="text-2xl font-bold text-blue-600 mb-1">{totalDays}</div>
-            <div className="text-xs text-gray-600">Días analizados</div>
+          <div className="text-center p-3 bg-gray-700 rounded-lg">
+            <div className="text-2xl font-bold text-blue-400 mb-1">{totalDays}</div>
+            <div className="text-xs text-gray-300">Días analizados</div>
           </div>
-          <div className="text-center p-3 bg-green-50 rounded-lg">
-            <div className="text-2xl font-bold text-green-600 mb-1">{meals.length}</div>
-            <div className="text-xs text-gray-600">Comidas registradas</div>
+          <div className="text-center p-3 bg-gray-700 rounded-lg">
+            <div className="text-2xl font-bold text-green-400 mb-1">{meals.length}</div>
+            <div className="text-xs text-gray-300">Comidas registradas</div>
           </div>
-          <div className="text-center p-3 bg-purple-50 rounded-lg">
-            <div className="text-2xl font-bold text-purple-600 mb-1">{scores.length}</div>
-            <div className="text-xs text-gray-600">Scores calculados</div>
+          <div className="text-center p-3 bg-gray-700 rounded-lg">
+            <div className="text-2xl font-bold text-purple-400 mb-1">{scores.length}</div>
+            <div className="text-xs text-gray-300">Scores calculados</div>
           </div>
-          <div className="text-center p-3 bg-orange-50 rounded-lg">
-            <div className="text-2xl font-bold text-orange-600 mb-1">
+          <div className="text-center p-3 bg-gray-700 rounded-lg">
+            <div className="text-2xl font-bold text-orange-400 mb-1">
               {scores.length > 0 ? (scores.reduce((s, sc) => s + sc.score, 0) / scores.length).toFixed(1) : "0.0"}
             </div>
-            <div className="text-xs text-gray-600">Score promedio</div>
+            <div className="text-xs text-gray-300">Score promedio</div>
           </div>
         </div>
       </div>

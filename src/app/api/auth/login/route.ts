@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
   try {
@@ -24,7 +25,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    console.log("✅ Usuario encontrado:", user.id);
+    // Verificar la contraseña
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      return NextResponse.json(
+        { error: "Contraseña incorrecta" },
+        { status: 401 }
+      );
+    }
+
+    console.log("✅ Usuario autenticado exitosamente:", user.id);
 
     return NextResponse.json({
       success: true,

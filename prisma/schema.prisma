@@ -4,8 +4,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 // Enums
@@ -20,6 +20,7 @@ enum MealType {
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
+  password  String
   name      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -41,7 +42,7 @@ model Meal {
   has_carb     Boolean
   has_protein  Boolean
   has_veggies  Boolean
-  notes        String?  @db.Text
+  notes        String?
   createdAt    DateTime @default(now())
 
   user         User     @relation(fields: [userId], references: [id])
@@ -57,7 +58,7 @@ model IdealDiet {
   ideal_carb     Boolean
   ideal_protein  Boolean
   ideal_veggies  Boolean
-  notes          String?  @db.Text
+  notes          String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 

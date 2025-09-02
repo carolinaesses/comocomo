@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function useUser() {
+  const router = useRouter();
   const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -79,6 +81,8 @@ export function useUser() {
     setUser(null);
     // Clear the cookie
     document.cookie = "comocomo-user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    // Redirect to login page
+    router.push('/signin');
   };
 
   return {

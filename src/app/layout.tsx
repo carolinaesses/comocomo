@@ -7,7 +7,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Comocomo",
+  title: "¿Cómo como?",
   description: "Seguimiento nutricional inteligente con IA",
 };
 
@@ -24,7 +24,7 @@ export default function RootLayout({
             <header className="bg-gray-800 shadow-sm border-b border-gray-700 px-4 py-3 sticky top-0 z-10">
               <div className="flex items-center justify-between">
                 <Link href="/summary" className="text-lg font-bold text-white">
-                  🍽️ Comocomo
+                  🍽️ ¿Cómo como?
                 </Link>
                 <AuthHeader />
               </div>

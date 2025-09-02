@@ -26,9 +26,18 @@ function todayStr(): string {
   return `${y}-${m}-${day}`;
 }
 
+function thirtyDaysAgoStr(): string {
+  const d = new Date();
+  d.setDate(d.getDate() - 30);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 export default function MealsPage() {
   const { userId } = useUser();
-  const [from, setFrom] = useState(todayStr());
+  const [from, setFrom] = useState(thirtyDaysAgoStr());
   const [to, setTo] = useState(todayStr());
   const [typeFilter, setTypeFilter] = useState<string>("");
   const [axisFilter, setAxisFilter] = useState<string>("");
@@ -122,7 +131,8 @@ export default function MealsPage() {
 
       const res = await fetch("/api/ingest-txt", {
         method: "POST",
-        body: formData
+        body: formData,
+        credentials: "include"
       });
 
       const result = await res.json();
@@ -161,7 +171,12 @@ export default function MealsPage() {
   async function onBulkImport() {
     try {
       const parsed = JSON.parse(bulkText);
-      const res = await fetch("/api/meals/bulk", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(parsed) });
+      const res = await fetch("/api/meals/bulk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(parsed),
+        credentials: "include"
+      });
       if (!res.ok) throw new Error(await res.text());
       setBulkOpen(false);
       await fetchMeals();

@@ -1,7 +1,7 @@
 export default function HelpPage() {
   return (
     <main className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Ayuda - Comocomo</h1>
+      <h1 className="text-3xl font-bold mb-6">Ayuda - ¿Cómo como?</h1>
 
       <div className="space-y-8">
         <section>

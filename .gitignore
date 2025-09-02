@@ -43,3 +43,7 @@ next-env.d.ts
 # MCP configuration
 mcp.json
 mcp-config.env
+
+# SQLite database
+prisma/dev.db
+prisma/migrations/

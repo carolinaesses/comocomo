@@ -17,6 +17,7 @@
   "dependencies": {
     "@prisma/client": "^6.15.0",
     "@stackframe/stack": "^2.8.36",
+    "bcryptjs": "^3.0.2",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
     "googleapis": "^159.0.0",
@@ -28,6 +29,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

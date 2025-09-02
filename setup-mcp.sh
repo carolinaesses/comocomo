@@ -26,3 +26,4 @@ echo "  \"--project-ref=\${MESIMATI_PROJECT_REF}\""
 echo ""
 echo "Note: The global mcp.json is located at ~/.cursor/mcp.json"
 
+

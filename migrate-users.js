@@ -1,4 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcryptjs');
 
 const prisma = new PrismaClient();
 
@@ -40,11 +41,15 @@ async function migrateExistingUsers() {
 
     // Crear usuarios para los userId que no existen
     const usersToCreate = [];
+    const defaultPassword = 'temppassword123'; // Contraseña temporal para usuarios migrados
+    const hashedPassword = await bcrypt.hash(defaultPassword, 12);
+
     for (const userId of allUserIds) {
       if (!existingUserIds.has(userId)) {
         usersToCreate.push({
           id: userId,
           email: `user-${userId}@migrated.local`, // Email temporal
+          password: hashedPassword,
           name: `Usuario ${userId}`,
         });
       }
@@ -52,9 +57,10 @@ async function migrateExistingUsers() {
 
     if (usersToCreate.length > 0) {
       console.log(`👤 Creando ${usersToCreate.length} usuarios...`);
+      console.log(`🔑 Usando contraseña temporal: ${defaultPassword}`);
+      console.log("⚠️ IMPORTANTE: Los usuarios migrados deben cambiar su contraseña después del primer login");
       await prisma.user.createMany({
-        data: usersToCreate,
-        skipDuplicates: true
+        data: usersToCreate
       });
       console.log("✅ Usuarios creados exitosamente");
     } else {

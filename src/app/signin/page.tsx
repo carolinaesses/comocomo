@@ -72,7 +72,7 @@ function AuthContent() {
     <div className="min-h-screen bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-white mb-2">🍽️ Comocomo</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">¿Cómo como?</h1>
           <h2 className="text-xl font-semibold text-gray-300 mb-8">
             Nutrición Inteligente con IA
           </h2>
@@ -130,16 +130,17 @@ function AuthContent() {
                   <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300">
                     Confirmar Contraseña
                   </label>
-                  <input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type="password"
-                    required
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Confirma tu contraseña"
-                  />
+                                  <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Confirma tu contraseña"
+                />
                 </div>
               )}
 

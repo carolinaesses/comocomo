@@ -110,7 +110,6 @@ export async function POST(req: NextRequest) {
       // Crear las comidas en la base de datos usando Prisma
       const createdMeals = await prisma.meal.createMany({
         data: mealsToCreate,
-        skipDuplicates: true, // Evitar duplicados según la restricción única
       });
 
       console.log("✅ Datos guardados exitosamente en la base de datos:", {
