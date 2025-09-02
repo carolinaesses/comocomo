@@ -98,8 +98,7 @@ function AuthContent() {
                 type="email"
                 name="username"
                 autoComplete="username"
-                value={email}
-                readOnly
+                defaultValue=""
                 className="sr-only"
                 aria-hidden="true"
               />

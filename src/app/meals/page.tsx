@@ -212,10 +212,10 @@ export default function MealsPage() {
               onChange={(e) => setTypeFilter(e.target.value)}
             >
               <option value="">Tipo (todos)</option>
-              <option value="breakfast">Breakfast</option>
-              <option value="lunch">Lunch</option>
-              <option value="dinner">Dinner</option>
-              <option value="snack">Snack</option>
+              <option value="breakfast">Desayuno</option>
+              <option value="lunch">Almuerzo</option>
+              <option value="snack">Merienda</option>
+              <option value="dinner">Cena</option>
             </select>
             <select
               className="bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -223,9 +223,9 @@ export default function MealsPage() {
               onChange={(e) => setAxisFilter(e.target.value)}
             >
               <option value="">Eje (todos)</option>
-              <option value="carb">Carb</option>
-              <option value="protein">Protein</option>
-              <option value="veggies">Veggies</option>
+              <option value="carb">Carbohidratos</option>
+              <option value="protein">Proteína</option>
+              <option value="veggies">Vegetales</option>
             </select>
           </div>
           <button
@@ -263,12 +263,6 @@ export default function MealsPage() {
             )}
           </button>
         </div>
-        <button
-          className="bg-gray-600 text-white rounded px-3 py-2 text-sm hover:bg-gray-700 transition-colors"
-          onClick={() => setBulkOpen(true)}
-        >
-          📄 Importar JSON
-        </button>
       </div>
 
       {/* Hidden file input */}
