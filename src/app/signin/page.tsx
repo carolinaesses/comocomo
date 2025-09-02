@@ -111,6 +111,7 @@ function AuthContent() {
                   id="email"
                   name="email"
                   type="email"
+                  autoComplete="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -127,6 +128,7 @@ function AuthContent() {
                   id="password"
                   name="password"
                   type="password"
+                  autoComplete={isLogin ? "current-password" : "new-password"}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -140,17 +142,17 @@ function AuthContent() {
                   <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300">
                     Confirmar Contraseña
                   </label>
-                                  <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Confirma tu contraseña"
-                />
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="mt-1 block w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md shadow-sm placeholder-gray-400 text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Confirma tu contraseña"
+                  />
                 </div>
               )}
 
